@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Drawing;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 namespace Akis {
- internal static class Brand200 {
+ internal static class BrandingTests {
   static List<string> log=new List<string>();
   static void Check(bool ok,string message){if(!ok)throw new Exception(message);log.Add("PASS: "+message);}
   static IEnumerable<Control> All(Control c){yield return c;foreach(Control ch in c.Controls)foreach(var x in All(ch))yield return x;}

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Windows.Forms;
 namespace Akis {
- internal static class NavigationCache200 {
+ internal static class NavigationCacheTests {
   static List<string> log=new List<string>();
   static IEnumerable<Control> All(Control c){yield return c;foreach(Control child in c.Controls)foreach(var x in All(child))yield return x;}
   static void Check(bool v,string s){if(!v)throw new Exception(s);log.Add("PASS: "+s);}

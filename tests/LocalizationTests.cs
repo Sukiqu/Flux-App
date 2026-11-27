@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Drawing;
@@ -10,7 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 namespace Akis {
-internal static class Language210 {
+internal static class LocalizationTests {
 static List<string> log=new List<string>();
 static void Check(bool ok,string s){if(!ok)throw new Exception(s);log.Add("PASS: "+s);}
 static IEnumerable<Control> All(Control root){yield return root;foreach(Control c in root.Controls)foreach(var child in All(c))yield return child;}

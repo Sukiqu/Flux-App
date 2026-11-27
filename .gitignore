@@ -27,12 +27,3 @@ Desktop.ini
 [Pp][Uu][Bb][Ll][Ii][Ss][Hh][Ii][Nn][Gg].md
 private/
 *.private.md
-
-# Local editor and assistant workspace files
-.agents/
-.codex/
-.claude/
-AGENTS.md
-CLAUDE.md
-GEMINI.md
-*session*.jsonl

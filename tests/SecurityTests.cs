@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Diagnostics;
 namespace Akis {
- internal static class Security210 {
+ internal static class SecurityTests {
   static List<string> log=new List<string>();
   static void Check(bool value,string name){if(!value)throw new Exception(name);log.Add("PASS: "+name);}
   static Preferences Read(string text){using(var s=new MemoryStream(Encoding.UTF8.GetBytes(text)))return Preferences.Read(s);}

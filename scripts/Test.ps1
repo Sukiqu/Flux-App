@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference='Stop'
+$ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 & (Join-Path $PSScriptRoot 'Test-Dependencies.ps1')
 & (Join-Path $PSScriptRoot 'Test-WorkflowSecurity.ps1')
@@ -14,7 +14,7 @@ foreach($name in @('System.Runtime','System.ObjectModel','System.Runtime.Interop
 }
 $assets=& (Join-Path $root 'Assets/Resources.ps1')
 $source=Get-ChildItem (Join-Path $root 'Kaynak') -Filter '*.cs' | ForEach-Object {$_.FullName}
-foreach($name in @('Security210','Brand200','NavigationCache200','Language210')) {
+foreach($name in @('SecurityTests','BrandingTests','NavigationCacheTests','LocalizationTests')) {
  $exe=Join-Path $output "$name.exe"
  & "$fx/csc.exe" /nologo /target:exe /optimize+ /debug- "/main:Akis.$name" "/out:$exe" $assets $refs $source (Join-Path $root "tests/$name.cs")
  if($LASTEXITCODE -ne 0){throw "Test compilation failed: $name"}
