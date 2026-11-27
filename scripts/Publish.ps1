@@ -27,8 +27,9 @@ foreach($name in @('README.md','LICENSE','SECURITY.md','PRIVACY.md','CHANGELOG.m
 }
 # Keep the portable README's logo available beside its flat checksum manifest.
 Copy-Item -LiteralPath (Join-Path $root 'Assets/flux-symbol.png') -Destination $portable
+Copy-Item -LiteralPath (Join-Path $root 'Assets/flux-preview.png') -Destination $portable
 $portableReadme=Join-Path $portable 'README.md'
-$portableText=[IO.File]::ReadAllText($portableReadme).Replace('src="Assets/flux-symbol.png"','src="flux-symbol.png"')
+$portableText=[IO.File]::ReadAllText($portableReadme).Replace('src="Assets/flux-symbol.png"','src="flux-symbol.png"').Replace('src="Assets/flux-preview.png"','src="flux-preview.png"')
 [IO.File]::WriteAllText($portableReadme,$portableText,[Text.UTF8Encoding]::new($false))
 Copy-Item -LiteralPath $exe -Destination (Join-Path $portable 'Flux.exe')
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Verify-Checksums.ps1') -Destination $portable

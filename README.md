@@ -8,6 +8,13 @@
 Media, volume and keyboard lock notifications in one focused interface.</p>
 
 <p align="center">Version 2.1.0 · Windows · Developed by <strong>sukiqu</strong></p>
+<p align="center">
+  <a href="https://github.com/Sukiqu/Flux-App/releases/latest"><strong>Download Flux for Windows</strong></a>
+</p>
+
+<p align="center">
+  <img src="Assets/flux-preview.png" alt="Flux settings dashboard showing panel previews, themes and customization controls" width="1000">
+</p>
 
 ---
 
