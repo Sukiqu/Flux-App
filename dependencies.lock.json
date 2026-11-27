@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "nugetPackages": [],
+  "actions": {
+    "actions/checkout": "de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+    "actions/upload-artifact": "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+    "actions/attest-build-provenance": "96278af6caaf10aea03fd8d33a09a777ca52d62f"
+  },
+  "platform": {
+    "framework": ".NET Framework 4.8",
+    "runner": "windows-2022",
+    "compiler": "Windows .NET Framework csc",
+    "note": "OS/SDK patch versions are not frozen. Identical ZIP inputs are reproducible; independently rebuilt EXEs are not claimed to be byte-identical."
+  }
+}

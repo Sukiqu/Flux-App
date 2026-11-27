@@ -1,0 +1,38 @@
+name: Weekly integrity checks
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flux-integrity-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  integrity:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Check dependency pins and workflow permissions
+        run: |
+          .\scripts\Test-Dependencies.ps1
+          .\scripts\Test-WorkflowSecurity.ps1
+      - name: Check manifest and release security fixtures
+        run: .\scripts\Test-ReleaseSecurity.ps1
+      - name: Scan tracked source for private data
+        run: .\scripts\Test-Privacy.ps1 -Path .

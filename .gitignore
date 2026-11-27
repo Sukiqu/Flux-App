@@ -1,0 +1,38 @@
+# Build/release products and test output
+*.exe
+*.pdb
+*.zip
+artifacts/
+dist/
+bin/
+obj/
+# Local state, credentials and editor metadata
+.vs/
+.vscode/
+.env
+.env.*
+*.pfx
+*.p12
+*.pem
+*.key
+*.log
+settings.xml
+settings.xml.tmp
+last-error.txt
+diagnostic*.txt
+Thumbs.db
+Desktop.ini
+# Private project notes and checklists
+[Tt][Oo][Dd][Oo].md
+[Pp][Uu][Bb][Ll][Ii][Ss][Hh][Ii][Nn][Gg].md
+private/
+*.private.md
+
+# Local editor and assistant workspace files
+.agents/
+.codex/
+.claude/
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+*session*.jsonl

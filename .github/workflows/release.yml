@@ -1,0 +1,78 @@
+name: Build and release
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: flux-release-${{ github.ref }}
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: pwsh
+jobs:
+  build:
+    name: Build
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Build, test and prepare clean packages
+        run: .\scripts\Publish.ps1
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Flux-2.1.0
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
+  release:
+    name: Draft release
+    if: ${{ startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push' }}
+    runs-on: windows-2022
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Check release tag
+        env:
+          RELEASE_ALLOWED_SIGNERS: ${{ vars.RELEASE_ALLOWED_SIGNERS }}
+        run: |
+          if ($env:GITHUB_REF_NAME -ne 'v2.1.0') { throw 'Tag must match release version v2.1.0.' }
+          if ([string]::IsNullOrWhiteSpace($env:RELEASE_ALLOWED_SIGNERS)) { throw 'Trusted SSH release signing keys are not configured.' }
+          $signers = Join-Path $env:RUNNER_TEMP 'flux-allowed-signers'
+          [IO.File]::WriteAllText($signers, $env:RELEASE_ALLOWED_SIGNERS)
+          .\scripts\Verify-ReleaseTag.ps1 -Tag $env:GITHUB_REF_NAME -AllowedSignersFile $signers
+      - name: Build, test and prepare clean packages
+        run: .\scripts\Publish.ps1
+      - name: Require the approved Windows publisher before release
+        env:
+          EXPECTED_SIGNER: ${{ vars.WINDOWS_SIGNER_THUMBPRINT }}
+        run: |
+          $hash = (Get-FileHash .\dist\Flux.exe -Algorithm SHA256).Hash
+          .\scripts\Verify-Download.ps1 -File .\dist\Flux.exe -ExpectedSha256 $hash -RequireSignature -ExpectedSignerThumbprint $env:EXPECTED_SIGNER
+      - name: Attest release artifacts
+        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
+        with:
+          subject-path: dist/*
+      - name: Create a draft for manual review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_REPO: ${{ github.repository }}
+        run: |
+          $assets = Get-ChildItem dist -File | ForEach-Object { $_.FullName }
+          gh release create "$env:RELEASE_TAG" @assets --repo "$env:RELEASE_REPO" --verify-tag --draft --title 'Flux 2.1.0' --notes-file CHANGELOG.md
+          if ($LASTEXITCODE -ne 0) { throw 'Draft release creation failed.' }
