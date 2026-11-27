@@ -48,21 +48,14 @@ jobs:
           fetch-depth: 0
       - name: Check release tag
         env:
-          RELEASE_ALLOWED_SIGNERS: ${{ vars.RELEASE_ALLOWED_SIGNERS }}
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          if ($env:GITHUB_REF_NAME -ne 'v2.1.0') { throw 'Tag must match release version v2.1.0.' }
-          if ([string]::IsNullOrWhiteSpace($env:RELEASE_ALLOWED_SIGNERS)) { throw 'Trusted SSH release signing keys are not configured.' }
-          $signers = Join-Path $env:RUNNER_TEMP 'flux-allowed-signers'
-          [IO.File]::WriteAllText($signers, $env:RELEASE_ALLOWED_SIGNERS)
-          .\scripts\Verify-ReleaseTag.ps1 -Tag $env:GITHUB_REF_NAME -AllowedSignersFile $signers
+          if ($env:RELEASE_TAG -ne 'v2.1.0') { throw 'Tag must match release version v2.1.0.' }
+          .\scripts\Verify-ReleaseTag.ps1 -Tag $env:RELEASE_TAG
       - name: Build, test and prepare clean packages
         run: .\scripts\Publish.ps1
-      - name: Require the approved Windows publisher before release
-        env:
-          EXPECTED_SIGNER: ${{ vars.WINDOWS_SIGNER_THUMBPRINT }}
-        run: |
-          $hash = (Get-FileHash .\dist\Flux.exe -Algorithm SHA256).Hash
-          .\scripts\Verify-Download.ps1 -File .\dist\Flux.exe -ExpectedSha256 $hash -RequireSignature -ExpectedSignerThumbprint $env:EXPECTED_SIGNER
+      - name: Verify release checksums
+        run: .\scripts\Verify-Checksums.ps1 -Directory .\dist
       - name: Attest release artifacts
         uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
         with:

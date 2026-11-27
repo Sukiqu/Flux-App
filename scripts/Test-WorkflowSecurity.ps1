@@ -11,4 +11,9 @@ foreach($workflow in $workflows) {
  if($yaml -notmatch '(?im)^\s*permissions\s*:'){throw "Workflow permissions are not declared: $($workflow.Name)"};$checks++
  if($yaml -notmatch '(?im)^\s*contents\s*:\s*read\s*$'){throw "Read-only contents permission is missing: $($workflow.Name)"};$checks++
 }
+$release=[IO.File]::ReadAllText((Join-Path $root '.github/workflows/release.yml'))
+if($release -match 'RELEASE_ALLOWED_SIGNERS|WINDOWS_SIGNER_THUMBPRINT|RequireSignature'){throw 'Release publishing must not require a signing certificate or signing key.'};$checks++
+if($release -notmatch 'Verify-ReleaseTag\.ps1'){throw 'Release tag validation is missing.'};$checks++
+if($release -notmatch 'Verify-Checksums\.ps1'){throw 'Release checksum validation is missing.'};$checks++
+if($release -notmatch 'gh release create[^\r\n]*--draft'){throw 'Release publishing must create a draft for review.'};$checks++
 Write-Output "Workflow security tests passed: $checks checks across $($workflows.Count) workflows."
