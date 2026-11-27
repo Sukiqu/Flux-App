@@ -57,7 +57,7 @@ jobs:
       - name: Verify release checksums
         run: .\scripts\Verify-Checksums.ps1 -Directory .\dist
       - name: Attest release artifacts
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: dist/*
       - name: Create a draft for manual review
